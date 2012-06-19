@@ -72,7 +72,7 @@ function RabbitMQ_ModuleFactory(JsonRpc, Support) {
     Support.extend(Channel.prototype,
     {
 	_dval: function(v, d) {
-	    return (v == null) ? d : v;
+	    return (v === null) ? d : v;
 	},
 
 	_call: function(method, args) {

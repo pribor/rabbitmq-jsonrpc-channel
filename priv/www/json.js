@@ -53,13 +53,13 @@ var JSON = {
 
     findJavaSerializer: function (o) {
 	var c = o.getClass();
-	while (c != null) {
-	    if (typeof this.javaSerializers[c.getName()] != 'undefined') {
+	while (c !== null) {
+	    if (typeof this.javaSerializers[c.getName()] !== 'undefined') {
 		return this.javaSerializers[c.getName()];
 	    }
 	    var interfaces = c.getInterfaces();
 	    for (var i = 0; i < interfaces.length; i++) {
-		if (typeof this.javaSerializers[interfaces[i].getName()] != 'undefined') {
+		if (typeof this.javaSerializers[interfaces[i].getName()] !== 'undefined') {
 		    return this.javaSerializers[interfaces[i].getName()];
 		}
 	    }
@@ -83,17 +83,17 @@ var JSON = {
                         s += v;
                     }
                     return '[' + s + ']';
-		} else if (typeof arg.toJsonString != 'undefined') {
+		} else if (typeof arg.toJsonString !== 'undefined') {
 		    return arg.toJsonString();
 		} else if (this.isJavaObject(arg)) {
 		    v = this.findJavaSerializer(arg);
-		    if (v != null) {
+		    if (v !== null) {
 			return v(arg);
 		    }
-                } else if (typeof arg.toString != 'undefined') {
+                } else if (typeof arg.toString !== 'undefined') {
                     for (i in arg) {
                         v = arg[i];
-                        if (typeof v != 'undefined' && typeof v != 'function') {
+                        if (typeof v !== 'undefined' && typeof v !== 'function') {
                             v = this.stringify(v);
                             if (s) {
                                 s += ',';
@@ -113,7 +113,7 @@ var JSON = {
             for (i = 0; i < l; i += 1) {
                 c = arg.charAt(i);
                 if (c >= ' ') {
-                    if (c == '\\' || c == '"') {
+                    if (c === '\\' || c === '"') {
                         s += '\\';
                     }
                     s += c;
@@ -168,7 +168,7 @@ var JSON = {
         }
 
         function white() {
-            while (ch != '' && ch <= ' ') {
+            while (ch !== '' && ch <= ' ') {
                 next();
             }
         }
@@ -176,12 +176,12 @@ var JSON = {
         function str() {
             var i, s = '', t, u;
 
-            if (ch == '"') {
+            if (ch === '"') {
 outer:          while (next()) {
-                    if (ch == '"') {
+                    if (ch === '"') {
                         next();
                         return s;
-                    } else if (ch == '\\') {
+                    } else if (ch === '\\') {
                         switch (next()) {
                         case 'b':
                             s += '\b';
@@ -223,20 +223,20 @@ outer:          while (next()) {
         function arr() {
             var a = [];
 
-            if (ch == '[') {
+            if (ch === '[') {
                 next();
                 white();
-                if (ch == ']') {
+                if (ch === ']') {
                     next();
                     return a;
                 }
                 while (ch) {
                     a.push(val());
                     white();
-                    if (ch == ']') {
+                    if (ch === ']') {
                         next();
                         return a;
-                    } else if (ch != ',') {
+                    } else if (ch !== ',') {
                         break;
                     }
                     next();
@@ -249,26 +249,26 @@ outer:          while (next()) {
         function obj() {
             var k, o = {};
 
-            if (ch == '{') {
+            if (ch === '{') {
                 next();
                 white();
-                if (ch == '}') {
+                if (ch === '}') {
                     next();
                     return o;
                 }
                 while (ch) {
                     k = str();
                     white();
-                    if (ch != ':') {
+                    if (ch !== ':') {
                         break;
                     }
                     next();
                     o[k] = val();
                     white();
-                    if (ch == '}') {
+                    if (ch === '}') {
                         next();
                         return o;
-                    } else if (ch != ',') {
+                    } else if (ch !== ',') {
                         break;
                     }
                     next();
@@ -280,7 +280,7 @@ outer:          while (next()) {
 
         function num() {
             var n = '', v;
-            if (ch == '-') {
+            if (ch === '-') {
                 n = '-';
                 next();
             }
@@ -288,16 +288,16 @@ outer:          while (next()) {
                 n += ch;
                 next();
             }
-            if (ch == '.') {
+            if (ch === '.') {
                 n += '.';
                 while (next() && ch >= '0' && ch <= '9') {
                     n += ch;
                 }
             }
-            if (ch == 'e' || ch == 'E') {
+            if (ch === 'e' || ch === 'E') {
                 n += 'e';
                 next();
-                if (ch == '-' || ch == '+') {
+                if (ch === '-' || ch === '+') {
                     n += ch;
                     next();
                 }
@@ -317,20 +317,20 @@ outer:          while (next()) {
         function word() {
             switch (ch) {
                 case 't':
-                    if (next() == 'r' && next() == 'u' && next() == 'e') {
+                    if (next() === 'r' && next() === 'u' && next() === 'e') {
                         next();
                         return true;
                     }
                     break;
                 case 'f':
-                    if (next() == 'a' && next() == 'l' && next() == 's' &&
-                            next() == 'e') {
+                    if (next() === 'a' && next() === 'l' && next() === 's' &&
+                            next() === 'e') {
                         next();
                         return false;
                     }
                     break;
                 case 'n':
-                    if (next() == 'u' && next() == 'l' && next() == 'l') {
+                    if (next() === 'u' && next() === 'l' && next() === 'l') {
                         next();
                         return null;
                     }
@@ -341,9 +341,9 @@ outer:          while (next()) {
 
 	function ctor() {
 	    var name = '';
-	    if (ch == '@') {
+	    if (ch === '@') {
 		next();
-		while (ch == '.' || (ch.toUpperCase() >= 'A' &&
+		while (ch === '.' || (ch.toUpperCase() >= 'A' &&
 				     ch.toUpperCase() <= 'Z')) {
 		    name += ch;
 		    next();

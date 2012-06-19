@@ -33,8 +33,8 @@ Object.extend = function(destination, source) {
 
 Object.inspect = function(object) {
   try {
-    if (object == undefined) return 'undefined';
-    if (object == null) return 'null';
+    if (object === undefined) return 'undefined';
+    if (object === null) return 'null';
     return object.inspect ? object.inspect() : object.toString();
   } catch (e) {
     if (e instanceof RangeError) return '...';
@@ -124,10 +124,10 @@ function $() {
 
   for (var i = 0; i < arguments.length; i++) {
     var element = arguments[i];
-    if (typeof element == 'string')
+    if (typeof element === 'string')
       element = document.getElementById(element);
 
-    if (arguments.length == 1)
+    if (arguments.length === 1)
       return element;
 
     elements.push(element);
@@ -184,9 +184,9 @@ Object.extend(String.prototype, {
 
   camelize: function() {
     var oStringList = this.split('-');
-    if (oStringList.length == 1) return oStringList[0];
+    if (oStringList.length === 1) return oStringList[0];
 
-    var camelizedString = this.indexOf('-') == 0
+    var camelizedString = this.indexOf('-') === 0
       ? oStringList[0].charAt(0).toUpperCase() + oStringList[0].substring(1)
       : oStringList[0];
 
@@ -216,11 +216,11 @@ var Enumerable = {
         try {
           iterator(value, index++);
         } catch (e) {
-          if (e != $continue) throw e;
+          if (e !== $continue) throw e;
         }
       });
     } catch (e) {
-      if (e != $break) throw e;
+      if (e !== $break) throw e;
     }
   },
 
@@ -283,7 +283,7 @@ var Enumerable = {
   include: function(object) {
     var found = false;
     this.each(function(value) {
-      if (value == object) {
+      if (value === object) {
         found = true;
         throw $break;
       }
@@ -366,7 +366,7 @@ var Enumerable = {
 
   zip: function() {
     var iterator = Prototype.K, args = $A(arguments);
-    if (typeof args.last() == 'function')
+    if (typeof args.last() === 'function')
       iterator = args.pop();
 
     var collections = [this].concat(args).map($A);
@@ -425,13 +425,13 @@ Object.extend(Array.prototype, {
 
   compact: function() {
     return this.select(function(value) {
-      return value != undefined || value != null;
+      return value !== undefined || value !== null;
     });
   },
 
   flatten: function() {
     return this.inject([], function(array, value) {
-      return array.concat(value.constructor == Array ?
+      return array.concat(value.constructor === Array ?
         value.flatten() : [value]);
     });
   },
@@ -445,7 +445,7 @@ Object.extend(Array.prototype, {
 
   indexOf: function(object) {
     for (var i = 0; i < this.length; i++)
-      if (this[i] == object) return i;
+      if (this[i] === object) return i;
     return -1;
   },
 
@@ -469,7 +469,7 @@ var Hash = {
   _each: function(iterator) {
     for (key in this) {
       var value = this[key];
-      if (typeof value == 'function') continue;
+      if (typeof value === 'function') continue;
 
       var pair = [key, value];
       pair.key = key;
@@ -572,7 +572,7 @@ Ajax.Responders = {
 
   dispatch: function(callback, request, transport, json) {
     this.each(function(responder) {
-      if (responder[callback] && typeof responder[callback] == 'function') {
+      if (responder[callback] && typeof responder[callback] === 'function') {
         try {
           responder[callback].apply(responder, [request, transport, json]);
         } catch (e) {}
@@ -605,8 +605,8 @@ Ajax.Base.prototype = {
   },
 
   responseIsSuccess: function() {
-    return this.transport.status == undefined
-        || this.transport.status == 0
+    return this.transport.status === undefined
+        || this.transport.status === 0
         || (this.transport.status >= 200 && this.transport.status < 300);
   },
 
@@ -632,7 +632,7 @@ Ajax.Request.prototype = Object.extend(new Ajax.Base(), {
 
     try {
       this.url = url;
-      if (this.options.method == 'get' && parameters.length > 0)
+      if (this.options.method === 'get' && parameters.length > 0)
         this.url += (this.url.match(/\?/) ? '&' : '?') + parameters;
 
       Ajax.Responders.dispatch('onCreate', this, this.transport);
@@ -648,7 +648,7 @@ Ajax.Request.prototype = Object.extend(new Ajax.Base(), {
       this.setRequestHeaders();
 
       var body = this.options.postBody ? this.options.postBody : parameters;
-      this.transport.send(this.options.method == 'post' ? body : null);
+      this.transport.send(this.options.method === 'post' ? body : null);
 
     } catch (e) {
       this.dispatchException(e);
@@ -660,7 +660,7 @@ Ajax.Request.prototype = Object.extend(new Ajax.Base(), {
       ['X-Requested-With', 'XMLHttpRequest',
        'X-Prototype-Version', Prototype.Version];
 
-    if (this.options.method == 'post') {
+    if (this.options.method === 'post') {
       requestHeaders.push('Content-type',
         'application/x-www-form-urlencoded');
 
@@ -681,7 +681,7 @@ Ajax.Request.prototype = Object.extend(new Ajax.Base(), {
 
   onStateChange: function() {
     var readyState = this.transport.readyState;
-    if (readyState != 1)
+    if (readyState !== 1)
       this.respondToReadyState(this.transport.readyState);
   },
 
@@ -709,7 +709,7 @@ Ajax.Request.prototype = Object.extend(new Ajax.Base(), {
     var event = Ajax.Request.Events[readyState];
     var transport = this.transport, json = this.evalJSON();
 
-    if (event == 'Complete') {
+    if (event === 'Complete') {
       try {
         (this.options['on' + this.transport.status]
          || this.options['on' + (this.responseIsSuccess() ? 'Success' : 'Failure')]
@@ -730,7 +730,7 @@ Ajax.Request.prototype = Object.extend(new Ajax.Base(), {
     }
 
     /* Avoid memory leak in MSIE: clean up the oncomplete event handler */
-    if (event == 'Complete')
+    if (event === 'Complete')
       this.transport.onreadystatechange = Prototype.emptyFunction;
   },
 
@@ -814,7 +814,7 @@ Ajax.PeriodicalUpdater.prototype = Object.extend(new Ajax.Base(), {
 
   updateComplete: function(request) {
     if (this.options.decay) {
-      this.decay = (request.responseText == this.lastText ?
+      this.decay = (request.responseText === this.lastText ?
         this.decay * this.options.decay : 1);
 
       this.lastText = request.responseText;
@@ -844,7 +844,7 @@ if (!window.Element) {
 
 Object.extend(Element, {
   visible: function(element) {
-    return $(element).style.display != 'none';
+    return $(element).style.display !== 'none';
   },
 
   toggle: function() {
@@ -907,7 +907,7 @@ Object.extend(Element, {
     element = $(element);
     for (var i = 0; i < element.childNodes.length; i++) {
       var node = element.childNodes[i];
-      if (node.nodeType == 3 && !/\S/.test(node.nodeValue))
+      if (node.nodeType === 3 && !/\S/.test(node.nodeValue))
         Element.remove(node);
     }
   },
@@ -936,9 +936,9 @@ Object.extend(Element, {
     }
 
     if (window.opera && ['left', 'top', 'right', 'bottom'].include(style))
-      if (Element.getStyle(element, 'position') == 'static') value = 'auto';
+      if (Element.getStyle(element, 'position') === 'static') value = 'auto';
 
-    return value == 'auto' ? null : value;
+    return value === 'auto' ? null : value;
   },
 
   setStyle: function(element, style) {
@@ -949,7 +949,7 @@ Object.extend(Element, {
 
   getDimensions: function(element) {
     element = $(element);
-    if (Element.getStyle(element, 'display') != 'none')
+    if (Element.getStyle(element, 'display') !== 'none')
       return {width: element.offsetWidth, height: element.offsetHeight};
 
     // All *Width and *Height properties give 0 on elements with display none,
@@ -971,7 +971,7 @@ Object.extend(Element, {
   makePositioned: function(element) {
     element = $(element);
     var pos = Element.getStyle(element, 'position');
-    if (pos == 'static' || !pos) {
+    if (pos === 'static' || !pos) {
       element._madePositioned = true;
       element.style.position = 'relative';
       // Opera returns the offset relative to the positioning context, when an
@@ -999,7 +999,7 @@ Object.extend(Element, {
     element = $(element);
     if (element._overflow) return;
     element._overflow = element.style.overflow;
-    if ((Element.getStyle(element, 'overflow') || 'visible') != 'hidden')
+    if ((Element.getStyle(element, 'overflow') || 'visible') !== 'hidden')
       element.style.overflow = 'hidden';
   },
 
@@ -1029,7 +1029,7 @@ Abstract.Insertion.prototype = {
       try {
         this.element.insertAdjacentHTML(this.adjacency, this.content);
       } catch (e) {
-        if (this.element.tagName.toLowerCase() == 'tbody') {
+        if (this.element.tagName.toLowerCase() === 'tbody') {
           this.insertContent(this.contentFromAnonymousTable());
         } else {
           throw e;
@@ -1134,7 +1134,7 @@ Element.ClassNames.prototype = {
   remove: function(classNameToRemove) {
     if (!this.include(classNameToRemove)) return;
     this.set(this.select(function(className) {
-      return className != classNameToRemove;
+      return className !== classNameToRemove;
     }).join(' '));
   },
 
@@ -1156,7 +1156,7 @@ var Field = {
 
   present: function() {
     for (var i = 0; i < arguments.length; i++)
-      if ($(arguments[i]).value == '') return false;
+      if ($(arguments[i]).value === '') return false;
     return true;
   },
 
@@ -1210,8 +1210,8 @@ var Form = {
     var matchingInputs = new Array();
     for (var i = 0; i < inputs.length; i++) {
       var input = inputs[i];
-      if ((typeName && input.type != typeName) ||
-          (name && input.name != name))
+      if ((typeName && input.type !== typeName) ||
+          (name && input.name !== name))
         continue;
       matchingInputs.push(input);
     }
@@ -1238,7 +1238,7 @@ var Form = {
 
   findFirstElement: function(form) {
     return Form.getElements(form).find(function(element) {
-      return element.type != 'hidden' && !element.disabled &&
+      return element.type !== 'hidden' && !element.disabled &&
         ['input', 'select', 'textarea'].include(element.tagName.toLowerCase());
     });
   },
@@ -1260,9 +1260,9 @@ Form.Element = {
 
     if (parameter) {
       var key = encodeURIComponent(parameter[0]);
-      if (key.length == 0) return;
+      if (key.length === 0) return;
 
-      if (parameter[1].constructor != Array)
+      if (parameter[1].constructor !== Array)
         parameter[1] = [parameter[1]];
 
       return parameter[1].map(function(value) {
@@ -1306,7 +1306,7 @@ Form.Element.Serializers = {
   },
 
   select: function(element) {
-    return Form.Element.Serializers[element.type == 'select-one' ?
+    return Form.Element.Serializers[element.type === 'select-one' ?
       'selectOne' : 'selectMany'](element);
   },
 
@@ -1359,7 +1359,7 @@ Abstract.TimedObserver.prototype = {
 
   onTimerEvent: function() {
     var value = this.getValue();
-    if (this.lastValue != value) {
+    if (this.lastValue !== value) {
       this.callback(this.element, value);
       this.lastValue = value;
     }
@@ -1389,7 +1389,7 @@ Abstract.EventObserver.prototype = {
     this.callback = callback;
 
     this.lastValue = this.getValue();
-    if (this.element.tagName.toLowerCase() == 'form')
+    if (this.element.tagName.toLowerCase() === 'form')
       this.registerFormCallbacks();
     else
       this.registerCallback(this.element);
@@ -1397,7 +1397,7 @@ Abstract.EventObserver.prototype = {
 
   onElementEvent: function() {
     var value = this.getValue();
-    if (this.lastValue != value) {
+    if (this.lastValue !== value) {
       this.callback(this.element, value);
       this.lastValue = value;
     }
@@ -1461,8 +1461,8 @@ Object.extend(Event, {
   },
 
   isLeftClick: function(event) {
-    return (((event.which) && (event.which == 1)) ||
-            ((event.button) && (event.button == 1)));
+    return (((event.which) && (event.which === 1)) ||
+            ((event.button) && (event.button === 1)));
   },
 
   pointerX: function(event) {
@@ -1490,7 +1490,7 @@ Object.extend(Event, {
   findElement: function(event, tagName) {
     var element = Event.element(event);
     while (element.parentNode && (!element.tagName ||
-        (element.tagName.toUpperCase() != tagName.toUpperCase())))
+        (element.tagName.toUpperCase() !== tagName.toUpperCase())))
       element = element.parentNode;
     return element;
   },
@@ -1521,7 +1521,7 @@ Object.extend(Event, {
     var element = $(element);
     useCapture = useCapture || false;
 
-    if (name == 'keypress' &&
+    if (name === 'keypress' &&
         (navigator.appVersion.match(/Konqueror|Safari|KHTML/)
         || element.attachEvent))
       name = 'keydown';
@@ -1533,7 +1533,7 @@ Object.extend(Event, {
     var element = $(element);
     useCapture = useCapture || false;
 
-    if (name == 'keypress' &&
+    if (name === 'keypress' &&
         (navigator.appVersion.match(/Konqueror|Safari|KHTML/)
         || element.detachEvent))
       name = 'keydown';
@@ -1595,7 +1595,7 @@ var Position = {
       element = element.offsetParent;
       if (element) {
         p = Element.getStyle(element, 'position');
-        if (p == 'relative' || p == 'absolute') break;
+        if (p === 'relative' || p === 'absolute') break;
       }
     } while (element);
     return [valueL, valueT];
@@ -1603,10 +1603,10 @@ var Position = {
 
   offsetParent: function(element) {
     if (element.offsetParent) return element.offsetParent;
-    if (element == document.body) return element;
+    if (element === document.body) return element;
 
-    while ((element = element.parentNode) && element != document.body)
-      if (Element.getStyle(element, 'position') != 'static')
+    while ((element = element.parentNode) && element !== document.body)
+      if (Element.getStyle(element, 'position') !== 'static')
         return element;
 
     return document.body;
@@ -1642,10 +1642,10 @@ var Position = {
   // within must be called directly before
   overlap: function(mode, element) {
     if (!mode) return 0;
-    if (mode == 'vertical')
+    if (mode === 'vertical')
       return ((this.offset[1] + element.offsetHeight) - this.ycomp) /
         element.offsetHeight;
-    if (mode == 'horizontal')
+    if (mode === 'horizontal')
       return ((this.offset[0] + element.offsetWidth) - this.xcomp) /
         element.offsetWidth;
   },
@@ -1704,13 +1704,13 @@ var Position = {
     var parent = null;
     // delta [0,0] will do fine with position: fixed elements,
     // position:absolute needs offsetParent deltas
-    if (Element.getStyle(target,'position') == 'absolute') {
+    if (Element.getStyle(target,'position') === 'absolute') {
       parent = Position.offsetParent(target);
       delta = Position.page(parent);
     }
 
     // correct by body offsets (fixes Safari)
-    if (parent == document.body) {
+    if (parent === document.body) {
       delta[0] -= document.body.offsetLeft;
       delta[1] -= document.body.offsetTop;
     }
@@ -1724,7 +1724,7 @@ var Position = {
 
   absolutize: function(element) {
     element = $(element);
-    if (element.style.position == 'absolute') return;
+    if (element.style.position === 'absolute') return;
     Position.prepare();
 
     var offsets = Position.positionedOffset(element);
@@ -1747,7 +1747,7 @@ var Position = {
 
   relativize: function(element) {
     element = $(element);
-    if (element.style.position == 'relative') return;
+    if (element.style.position === 'relative') return;
     Position.prepare();
 
     element.style.position = 'relative';
@@ -1770,8 +1770,8 @@ if (/Konqueror|Safari|KHTML/.test(navigator.userAgent)) {
     do {
       valueT += element.offsetTop  || 0;
       valueL += element.offsetLeft || 0;
-      if (element.offsetParent == document.body)
-        if (Element.getStyle(element, 'position') == 'absolute') break;
+      if (element.offsetParent === document.body)
+        if (Element.getStyle(element, 'position') === 'absolute') break;
 
       element = element.offsetParent;
     } while (element);
